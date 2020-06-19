@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import login from '../components/login.vue'
-import success from '../components/success.vue'
+import mywordbook from '../components/mywordbook.vue'
 
 Vue.use(VueRouter)
 
@@ -12,13 +12,13 @@ const routes = [
 		component:login
 	},
 	{
-		path:'/success',
-		name:'success',
-		component:success
-	},
-	{
 		path:'/',
 		redirect:'/login'
+	},
+	{
+		path:'/mywordbook',
+		name:'mywordbook',
+		component:mywordbook
 	}
 ]
 
