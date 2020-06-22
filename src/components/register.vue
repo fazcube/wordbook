@@ -9,22 +9,27 @@
 		<div class="container text-center">
 			<van-form @submit="onSubmit">
 				<div class="row mt-4">
-					<van-field v-model="username" name="username" label="用户名" left-icon="manager" placeholder="用户名" :rules="[{ required: true, message: '请填写用户名' }]" />
+					<van-field v-model="username" name="username" label="用户名" left-icon="manager" placeholder="请输入用户名" :rules="[{ required: true, message: '请填写用户名' }]" />
+				</div>
+				<div class="row mt-1">
+					<van-field v-model="password" type="password" name="password" label="密码" left-icon="lock" placeholder="请输入密码"
+					:rules="[{ required: true, message: '请填写密码' }]" />
 				</div>
 				<div class="row mt-1 mb-5">
-					<van-field v-model="password" type="password" name="password" label="密码" left-icon="lock" placeholder="密码" :rules="[{ required: true, message: '请填写密码' }]" />
+					<van-field v-model="password1" type="password" name="password" label="密码" left-icon="lock" placeholder="请再次输入密码"
+					:rules="[{ required: true, message: '请填写密码' }]" />
 				</div>
 				<div class="mt-5" style="margin: 16px;">
-					<van-button class="btncolor" round block type="info" native-type="submit">登录</van-button>
+					<van-button class="btncolor" round block type="info" native-type="submit">注册</van-button>
 				</div>
 			</van-form>
 			<div class="row fixed-bottom" style="height: 50px;">
 				<div class="col-5">
-					<a href="javascript:;" @click="phonelogin">手机号登录</a>
+					<a href="javascript:;">手机号登录</a>
 				</div>
 				<div class="col-3"></div>
 				<div class="col-4">
-					<a href="javascript:;" @click="toregister">注册</a>
+					<a href="javascript:;" @click="tologin">已有帐号，去登录</a>
 				</div>
 			</div>
 		</div>
@@ -35,48 +40,37 @@
 	import axios from 'axios'
 
 	export default {
-		name: 'login',
+		name: 'register',
 		data: function() {
 			return {
 				username: '',
-				password: ''
+				password: '',
+				password1: ''
 			}
 		},
 		methods: {
-			phonelogin(){
-				this.$toast.fail('该功能暂未开放');
-			},
-			toregister(){
-				console.log("跳转到注册页面");
-				this.$router.push("/register");
+			tologin() {
+				this.$router.push("/login");
 			},
 			onSubmit(values) {
 				var that = this;
 				console.log(values);
-				that.$toast.loading({
-					duration: 0, // 持续展示 toast
-					forbidClick: true,
-					message: '登录中...',
-				});
-				setTimeout(() => {
-					axios.post("/api/wuser/login", {
+				if (that.password == that.password1) {
+					axios.post("/api/wuser/register", {
 						username: values.username,
 						password: values.password
 					}).then(function(result) {
 						console.log(result.data);
 						if (result.data.stateCode == '200') {
-							that.$toast.clear();
-							sessionStorage.setItem("login_user", JSON.stringify(result.data.data));
-							that.$router.push("/mywordbook");
+							that.$toast.success('注册成功');
+							that.$router.push("/login");
 						} else if (result.data.stateCode == '500') {
-							setTimeout(()=>{
-								that.$toast.fail("用户名或密码错误");
-							})
-							that.$toast.clear();
+							alert("注册失败！");
 						}
 					})
-				}, 1000)
-
+				} else {
+					that.$toast.fail('两次输入的密码不一致');
+				}
 			}
 		}
 	}
